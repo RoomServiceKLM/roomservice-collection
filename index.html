@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171717">
+  <title>Tray & Table Collection · Kimpton Los Monteros</title>
+  <style>
+    :root{--ink:#171717;--gold:#dda72c;--cream:#fff8e7;--paper:#fff;--muted:#6d6a63;--line:#ead9aa;--green:#287455;--red:#a52d2d}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(150deg,#f8edcf,var(--cream));color:var(--ink);font-family:Arial,Helvetica,sans-serif;padding:18px}
+    button,input,textarea{font:inherit}.shell{width:min(520px,100%);margin:auto;background:var(--paper);border-radius:22px;overflow:hidden;box-shadow:0 18px 55px rgba(0,0,0,.13)}
+    header{background:var(--ink);color:#fff;text-align:center;padding:30px 22px 28px;position:relative}header:after{content:"";position:absolute;bottom:0;left:50%;width:58px;height:3px;transform:translateX(-50%);background:var(--gold)}
+    .hotel{font-family:Georgia,serif;font-size:17px;letter-spacing:.06em}.title{font-family:Georgia,serif;font-size:30px;margin:14px 0 6px}.subtitle{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+    .lang{position:absolute;right:15px;top:14px;border:1px solid #777;background:transparent;color:#fff;border-radius:99px;padding:6px 10px;font-size:11px;font-weight:700}
+    main{padding:27px 23px 30px}.intro{color:var(--muted);line-height:1.55;margin:0 0 24px}.section{color:#956c08;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin:24px 0 12px}
+    label{display:block;font-size:13px;font-weight:750;margin:0 0 8px}.field{margin-bottom:17px}.required{color:var(--red)}
+    input,textarea{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:14px;background:#fffdf7;color:var(--ink);outline:none}input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(221,167,44,.15)}textarea{resize:vertical;min-height:90px}
+    .button{width:100%;border:0;border-radius:12px;padding:15px;background:var(--gold);color:var(--ink);font-weight:850;letter-spacing:.04em;cursor:pointer}.button:disabled{opacity:.55;cursor:wait}.secondary{background:var(--ink);color:#fff}
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:14px 10px;text-align:center;font-weight:750;cursor:pointer}.choice.selected{border-color:var(--gold);background:#fff7d7;box-shadow:0 0 0 2px rgba(221,167,44,.16)}
+    .service-list{display:grid;gap:10px}.service{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:#fff;cursor:pointer}.service.selected{border-color:var(--gold);background:#fff7d7}.service b{display:block}.service small{color:var(--muted)}
+    .stars{display:flex;justify-content:center;gap:8px}.star{border:0;background:transparent;color:#d8d4ca;font-size:37px;padding:2px;cursor:pointer}.star.active{color:var(--gold)}.rating-text{text-align:center;color:var(--muted);font-size:12px;min-height:18px}
+    .message{border-radius:11px;padding:13px;margin:16px 0;font-size:13px;line-height:1.45}.error{background:#ffe5e5;color:#7d2020}.info{background:#fff4cf;color:#654b08}.hidden{display:none!important}
+    .success{text-align:center;padding:45px 20px}.tick{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;background:var(--green);color:#fff;font-size:31px}.success h2{font-family:Georgia,serif;font-size:28px}.success p{color:var(--muted);line-height:1.6}
+    footer{text-align:center;color:#999;font-size:11px;line-height:1.5;margin-top:24px;border-top:1px solid #eee;padding-top:18px}@media(max-width:390px){body{padding:0}.shell{border-radius:0;min-height:100vh}.choices{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <button id="langButton" class="lang" type="button">ES</button>
+      <div class="hotel">KIMPTON LOS MONTEROS</div>
+      <div class="title" data-i18n="title">Tray & Table Collection</div>
+      <div class="subtitle" data-i18n="subtitle">Room Service</div>
+    </header>
+    <main>
+      <section id="formSection">
+        <p class="intro" data-i18n="intro">Let us know when your Room Service tray or table is ready to be collected.</p>
+        <div class="section" data-i18n="guestDetails">Guest details</div>
+        <div class="field"><label for="room"><span data-i18n="room">Room number</span> <span class="required">*</span></label><input id="room" inputmode="numeric" autocomplete="off" placeholder="e.g. 215"></div>
+        <div class="field"><label for="guestName"><span data-i18n="name">Guest name</span> <span class="required">*</span></label><input id="guestName" autocomplete="name" placeholder="Name and surname"></div>
+        <button id="findButton" class="button secondary" type="button" data-i18n="find">Find my service</button>
+        <div id="lookupMessage" class="message hidden"></div>
+
+        <div id="requestFields" class="hidden">
+          <div class="section" data-i18n="selectService">Service to collect</div>
+          <div id="services" class="service-list"></div>
+          <div class="section" data-i18n="location">Where is it?</div>
+          <div class="choices" id="locations">
+            <button class="choice" type="button" data-location="INSIDE_ROOM" data-i18n="inside">Inside the room</button>
+            <button class="choice" type="button" data-location="OUTSIDE_DOOR" data-i18n="outside">Outside the door</button>
+            <button class="choice" type="button" data-location="TERRACE" data-i18n="terrace">On the terrace</button>
+            <button class="choice" type="button" data-location="OTHER" data-i18n="other">Other location</button>
+          </div>
+          <div class="field" style="margin-top:17px"><label for="notes"><span data-i18n="notes">Collection notes</span> <small data-i18n="optional">(optional)</small></label><textarea id="notes" placeholder="Any helpful details for our team"></textarea></div>
+          <div class="section" data-i18n="feedbackTitle">Your feedback</div>
+          <div class="field"><label data-i18n="rating">How was your Room Service experience?</label><div class="stars" id="stars"><button class="star" type="button" data-rating="1">★</button><button class="star" type="button" data-rating="2">★</button><button class="star" type="button" data-rating="3">★</button><button class="star" type="button" data-rating="4">★</button><button class="star" type="button" data-rating="5">★</button></div><div id="ratingText" class="rating-text" data-i18n="ratingOptional">Rating is optional</div></div>
+          <div class="field"><label for="feedback"><span data-i18n="feedback">Comments</span> <small data-i18n="optional">(optional)</small></label><textarea id="feedback" placeholder="Tell us what you enjoyed or how we can improve"></textarea></div>
+          <div id="submitMessage" class="message error hidden"></div>
+          <button id="submitButton" class="button" type="button" data-i18n="send">Request collection</button>
+        </div>
+        <footer data-i18n="footer">Your request will be sent directly to our Room Service team.</footer>
+      </section>
+      <section id="successSection" class="success hidden"><div class="tick">✓</div><h2 data-i18n="successTitle">Collection requested</h2><p data-i18n="successText">Thank you. Our Room Service team has been notified and will collect it as soon as possible.</p></section>
+    </main>
+  </div>
+  <script>
+    const API='https://roomservice-operations-api.roomservicekimptonlosmonteros.workers.dev/';
+    const deliveryNames={TRAY:{en:'Tray',es:'Bandeja'},TABLE_TROLLEY:{en:'Room Service table / trolley',es:'Mesa / trolley de Room Service'},DRINKS_GLASSWARE:{en:'Drinks / glassware',es:'Bebidas / cristalería'},CROCKERY:{en:'Crockery',es:'Vajilla'},OTHER:{en:'Room Service items',es:'Material de Room Service'}};
+    const copy={
+      en:{title:'Tray & Table Collection',subtitle:'Room Service',intro:'Let us know when your Room Service tray or table is ready to be collected.',guestDetails:'Guest details',room:'Room number',name:'Guest name',find:'Find my service',selectService:'Service to collect',location:'Where is it?',inside:'Inside the room',outside:'Outside the door',terrace:'On the terrace',other:'Other location',notes:'Collection notes',optional:'(optional)',feedbackTitle:'Your feedback',rating:'How was your Room Service experience?',ratingOptional:'Rating is optional',feedback:'Comments',send:'Request collection',footer:'Your request will be sent directly to our Room Service team.',successTitle:'Collection requested',successText:'Thank you. Our Room Service team has been notified and will collect it as soon as possible.',required:'Please enter your room number and name.',none:'We could not find a tray or table pending collection for this room. Please check the room number or contact Room Service.',chooseService:'Please select the service to collect.',chooseLocation:'Please tell us where the service is located.',error:'We could not send your request. Please try again or contact Room Service.',ratings:['','Poor','Fair','Good','Very good','Excellent']},
+      es:{title:'Recogida de bandeja y mesa',subtitle:'Room Service',intro:'Avísanos cuando tu bandeja o mesa de Room Service esté lista para recoger.',guestDetails:'Datos del huésped',room:'Número de habitación',name:'Nombre del huésped',find:'Buscar mi servicio',selectService:'Servicio que debemos recoger',location:'¿Dónde se encuentra?',inside:'Dentro de la habitación',outside:'Fuera de la puerta',terrace:'En la terraza',other:'Otra ubicación',notes:'Notas para la recogida',optional:'(opcional)',feedbackTitle:'Tu opinión',rating:'¿Cómo fue tu experiencia de Room Service?',ratingOptional:'La valoración es opcional',feedback:'Comentarios',send:'Solicitar recogida',footer:'Tu solicitud llegará directamente al equipo de Room Service.',successTitle:'Recogida solicitada',successText:'Gracias. El equipo de Room Service ha sido avisado y lo recogerá lo antes posible.',required:'Introduce el número de habitación y el nombre.',none:'No encontramos ninguna bandeja o mesa pendiente de recogida para esta habitación. Comprueba el número o contacta con Room Service.',chooseService:'Selecciona el servicio que debemos recoger.',chooseLocation:'Indica dónde se encuentra el servicio.',error:'No hemos podido enviar la solicitud. Inténtalo de nuevo o contacta con Room Service.',ratings:['','Mala','Regular','Buena','Muy buena','Excelente']}
+    };
+    let lang='en',options=[],deliveryId='',location='',rating='';
+    const $=id=>document.getElementById(id);
+    function translate(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(copy[lang][key])el.textContent=copy[lang][key];});$('langButton').textContent=lang==='en'?'ES':'EN';if(rating)$('ratingText').textContent=copy[lang].ratings[rating];renderServices();}
+    $('langButton').onclick=()=>{lang=lang==='en'?'es':'en';translate();};
+    $('findButton').onclick=async()=>{const room=$('room').value.trim(),name=$('guestName').value.trim();hideMessage('lookupMessage');$('requestFields').classList.add('hidden');if(!room||!name)return showMessage('lookupMessage',copy[lang].required,'error');setBusy('findButton',true);try{const response=await fetch(API+'?action=pickupOptions&room='+encodeURIComponent(room),{cache:'no-store'});const data=await response.json();if(!data.ok)throw new Error(data.error||'API error');options=(data.options||[]).filter(o=>o.deliveryType==='TRAY'||o.deliveryType==='TABLE_TROLLEY');if(!options.length)return showMessage('lookupMessage',copy[lang].none,'info');deliveryId=options.length===1?options[0].deliveryId:'';$('requestFields').classList.remove('hidden');renderServices();$('requestFields').scrollIntoView({behavior:'smooth',block:'start'});}catch(error){showMessage('lookupMessage',copy[lang].error,'error');}finally{setBusy('findButton',false);}};
+    function renderServices(){const box=$('services');if(!options.length){box.innerHTML='';return;}box.innerHTML=options.map(o=>{const selected=o.deliveryId===deliveryId?' selected':'';const name=(deliveryNames[o.deliveryType]||deliveryNames.OTHER)[lang];const time=new Date(o.deliveredAt).toLocaleString(lang==='es'?'es-ES':'en-GB',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});return '<button type="button" class="service'+selected+'" data-id="'+escapeHtml(o.deliveryId)+'"><b>'+escapeHtml(name)+'</b><small>'+escapeHtml(time)+'</small></button>';}).join('');box.querySelectorAll('.service').forEach(button=>button.onclick=()=>{deliveryId=button.dataset.id;renderServices();});}
+    $('locations').querySelectorAll('.choice').forEach(button=>button.onclick=()=>{$('locations').querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');location=button.dataset.location;});
+    $('stars').querySelectorAll('.star').forEach(button=>button.onclick=()=>{rating=button.dataset.rating;$('stars').querySelectorAll('.star').forEach(x=>x.classList.toggle('active',Number(x.dataset.rating)<=Number(rating)));$('ratingText').textContent=copy[lang].ratings[rating];});
+    $('submitButton').onclick=async()=>{hideMessage('submitMessage');if(!deliveryId)return showMessage('submitMessage',copy[lang].chooseService,'error');if(!location)return showMessage('submitMessage',copy[lang].chooseLocation,'error');setBusy('submitButton',true);try{const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'requestPickup',deliveryId,location,guestName:$('guestName').value.trim(),guestNotes:$('notes').value.trim(),rating,feedback:$('feedback').value.trim(),requestedBy:'GUEST_WEB'})});const data=await response.json();if(!data.ok)throw new Error(data.error||'API error');$('formSection').classList.add('hidden');$('successSection').classList.remove('hidden');}catch(error){showMessage('submitMessage',copy[lang].error,'error');setBusy('submitButton',false);}};
+    function setBusy(id,busy){$(id).disabled=busy;$(id).style.opacity=busy?'.55':'1';}
+    function showMessage(id,text,type){const el=$(id);el.textContent=text;el.className='message '+type;}
+    function hideMessage(id){$(id).className='message hidden';}
+    function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));}
+    translate();
+  </script>
+</body>
+</html>
